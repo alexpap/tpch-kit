@@ -30,6 +30,14 @@ def dbgen(sf=1, table=" "):
         run(dbgen_exec)
 
 
+def list():
+    with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
+        run("ls -lh *.tbl*")
+
+def clean():
+    with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
+        run("rm *.tbl*")
+
 def install():
     with cd("~/"):
         run("pwd")
