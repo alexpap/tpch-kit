@@ -25,9 +25,11 @@ tables_options = {
 }
 
 def dbgen(sf=1, table=""):
-    chunks = len(env.hosts)
-    chunk = env.hosts.index(env.host)
     table = tables_options[table]
+    chunks = len(env.hosts)
+    if chunks > 0:
+        chunk = env.hosts.index(env.host)
+
     print "Scale Factor = ", sf
     print "Chunks = ", chunks
     print "Chunk = ", chunk
