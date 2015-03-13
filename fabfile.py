@@ -27,6 +27,7 @@ def dbgen(sf=1, table=" "):
                      "-S {chunk} {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
         # print dbgen_exec
         run(dbgen_exec)
+        run("mkdir -p ~/tpch-kit-datasets")
         run("for file in $(ls *.tbl*); "
             "do "
             "mv $(basename $file) ~/tpch-kit-datasets/;"
@@ -50,7 +51,6 @@ def clean():
 def install():
     with cd("~/"):
         run("git clone https://github.com/alexpap/tpch-kit.git")
-        run("mkdir ~/tpch-kit-datasets")
 
 def update():
     with cd("~/tpch-kit"):
