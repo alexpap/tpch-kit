@@ -42,11 +42,11 @@ def dbgen(sf=1, table=" "):
 
 def list():
     with cd("~/tpch-kit-datasets"):
-        run("ls -lh *.gz")
+        run("ls -lh .")
 
 def clean():
     with cd("~/tpch-kit-datasets"):
-        run("rm *.gz")
+        run("rm -f *")
 
 def install():
     with cd("~/"):
