@@ -48,9 +48,8 @@ def install():
     with cd("~/"):
         run("if [ ! -d tpch-kit];"
             "then git clone https://github.com/alexpap/tpch-kit.git;"
-            "else;"
-            "git pull;"
-            "fi;")
+            "else git pull;"
+            "fi")
 
 def uninstall():
     with cd("~/"):
