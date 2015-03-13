@@ -11,7 +11,7 @@ tables_options = {
     'partsupp' : 'S'
 }
 
-def dbgen(sf=1, table=""):
+def dbgen(sf=1, table=" "):
     if not table:
        table = "-T {tbl_opt}".format(tbl_opt=tables_options[table])
     chunks = len(env.hosts)
