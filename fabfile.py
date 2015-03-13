@@ -30,13 +30,13 @@ def dbgen(sf=1, table="lopsc"):
 
 
 def install():
-    with path(" cd ~/"):
+    with path("~/"):
         run("git clone https://github.com/alexpap/tpch-kit.git")
 
 def update():
-    with path(" cd ~/tpch-kit"):
+    with path("~/tpch-kit"):
         run("git pull")
 
 def unistall():
-    with path(" cd ~/"):
+    with path("~/"):
         run("rm -rf tpch-kit")
