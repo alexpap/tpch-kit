@@ -25,7 +25,8 @@ def dbgen(sf=1, table="lopsc"):
     with path("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
         dbgen_exec = "./dbgen -f -s {sf} -C {chunks} " \
                      "-S {chunk} -T {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
-        run(dbgen_exec)
+        print dbgen_exec
+        #run(dbgen_exec)
 
 
 def install():
