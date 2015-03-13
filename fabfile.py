@@ -18,15 +18,14 @@ def dbgen(sf=1, table=" "):
     if chunks > 0:
         chunk = env.hosts.index(env.host) + 1
     else: chunk = 0
-    print "Scale Factor = ", sf
-    print "Chunks = ", chunks
-    print "Chunk = ", chunk
-    print "Table = ", table
+    # print "Scale Factor = ", sf
+    # print "Chunks = ", chunks
+    # print "Chunk = ", chunk
+    # print "Table = ", table
     with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
         dbgen_exec = "./dbgen -f -s {sf} -C {chunks} " \
                      "-S {chunk} {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
-        print dbgen_exec
-        run("pwd")
+        # print dbgen_exec
         run(dbgen_exec)
 
 
@@ -40,12 +39,10 @@ def clean():
 
 def install():
     with cd("~/"):
-        run("pwd")
         run("git clone https://github.com/alexpap/tpch-kit.git")
 
 def update():
     with cd("~/tpch-kit"):
-        run("pwd")
         run("git pull")
 
 def uninstall():
