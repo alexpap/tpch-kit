@@ -1,12 +1,11 @@
-__author__ = 'alex'
-from fabric.api import env, run
+import json
+from fabric.api import env, run, parallel, task
 
-env.hosts = [
-    '192.168.0.79',
-    '192.168.0.99',
-    '192.168.0.100'
-    ]
+def dbgen(sf=1):
+    chunks = len(env.hosts)
+    chunk = env.hosts.index(env.host)
+    print "Scale Factor = ", sf
+    print "Chunks = ", chunks
+    print "Chunk = ", chunk
 
-def uptime():
-    run('uptime')
 
