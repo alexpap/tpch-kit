@@ -26,11 +26,12 @@ def dbgen(sf=1, table="lopsc"):
         dbgen_exec = "./dbgen -f -s {sf} -C {chunks} " \
                      "-S {chunk} -T {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
         print dbgen_exec
-        #run(dbgen_exec)
+        run("pwd")
 
 
 def install():
     with path("~/"):
+        run("pwd")
         run("git clone https://github.com/alexpap/tpch-kit.git")
 
 def update():
