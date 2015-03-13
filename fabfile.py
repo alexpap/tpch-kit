@@ -34,7 +34,7 @@ def install():
         run("git clone https://github.com/alexpap/tpch-kit.git")
 
 def update():
-    with path(" cd ~/"):
+    with path(" cd ~/tpch-kit"):
         run("git pull")
 
 def unistall():
