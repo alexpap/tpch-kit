@@ -58,4 +58,5 @@ def update():
 
 def uninstall():
     with cd("~/"):
-        run("rm -rf tpch-kit")
+        run("rm -rf tpch-kit tpch-kit-datasets")
+
