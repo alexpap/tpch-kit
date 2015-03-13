@@ -29,22 +29,23 @@ def dbgen(sf=1, table=" "):
         run(dbgen_exec)
         run("for file in $(ls *.tbl*); "
             "do "
-            "mv $(basename $file) ~/tpch-kit-datasets/${file%.*};"
+            "mv $(basename $file) ~/tpch-kit-datasets/;"
             "done")
     with cd("~/tpch-kit-datasets"):
         run("for file in $(ls *.tbl); "
             "do "
-            "gzip $file;"
+            "mv $file ${file%.*}"
+            "gzip ${file%.*};"
             "done")
 
 
 def list():
-    with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
-        run("ls -lh *.tbl*")
+    with cd("~/tpch-kit-datasets"):
+        run("ls -lh *.gz")
 
 def clean():
-    with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
-        run("rm *.tbl*")
+    with cd("~/tpch-kit-datasets"):
+        run("rm *.gz")
 
 def install():
     with cd("~/"):
