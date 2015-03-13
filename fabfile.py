@@ -11,9 +11,9 @@ tables_options = {
     'partsupp' : 'S'
 }
 
-def dbgen(sf=1, table="lopsc"):
+def dbgen(sf=1, table=""):
     if not table:
-       table = tables_options[table]
+       table = "-T {tbl_opt}".format(tbl_opt=tables_options[table])
     chunks = len(env.hosts)
     if chunks > 0:
         chunk = env.hosts.index(env.host)
@@ -24,7 +24,7 @@ def dbgen(sf=1, table="lopsc"):
     print "Table = ", table
     with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
         dbgen_exec = "./dbgen -f -s {sf} -C {chunks} " \
-                     "-S {chunk} -T {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
+                     "-S {chunk} {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
         print dbgen_exec
         run("pwd")
         run(dbgen_exec)
