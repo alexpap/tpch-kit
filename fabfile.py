@@ -36,6 +36,7 @@ def install():
 
 def update():
     with path("~/tpch-kit"):
+        run("pwd")
         run("git pull")
 
 def unistall():
