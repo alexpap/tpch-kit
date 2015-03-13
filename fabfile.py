@@ -1,17 +1,5 @@
 import json
-from fabric.api import env, run, parallel, task
-
-# -T c   -- generate cutomers ONLY
-# -T l   -- generate nation/region ONLY
-# -T L   -- generate lineitem ONLY
-# -T n   -- generate nation ONLY
-# -T o   -- generate orders/lineitem ONLY
-# -T O   -- generate orders ONLY
-# -T p   -- generate parts/partsupp ONLY
-# -T P   -- generate parts ONLY
-# -T r   -- generate region ONLY
-# -T s   -- generate suppliers ONLY
-# -T S   -- generate partsupp ONLY
+from fabric.api import env, run, path
 
 tables_options = {
     'lineitem' : 'L',
@@ -24,7 +12,7 @@ tables_options = {
     'partsupp' : 'S'
 }
 
-def dbgen(sf=1, table=""):
+def dbgen(sf, table):
     if not table:
        table = tables_options[table]
     chunks = len(env.hosts)
@@ -35,5 +23,12 @@ def dbgen(sf=1, table=""):
     print "Chunks = ", chunks
     print "Chunk = ", chunk
     print "Table = ", table
+    with path("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
+        dbgen_cmd = "./dbgen -f -s % -C % -S % -T %" % (sf, chunks, chunk, table)
+        run("dbgen -h")
 
+
+def install():
+    with path(" cd ~/"):
+        run("git clone https://github.com/alexpap/tpch-kit.git")
 
