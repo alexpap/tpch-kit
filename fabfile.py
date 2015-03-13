@@ -34,7 +34,7 @@ def dbgen(sf=1, table=" "):
     with cd("~/tpch-kit-datasets"):
         run("for file in $(ls *.tbl); "
             "do "
-            "mv $file ${file%.*}"
+            "mv $file ${file%.*};"
             "gzip ${file%.*};"
             "done")
 
