@@ -1,4 +1,3 @@
-import json
 from fabric.api import env, run, path
 
 tables_options = {
@@ -12,7 +11,7 @@ tables_options = {
     'partsupp' : 'S'
 }
 
-def dbgen(sf, table):
+def dbgen(sf=1, table="lopsc"):
     if not table:
        table = tables_options[table]
     chunks = len(env.hosts)
@@ -24,8 +23,9 @@ def dbgen(sf, table):
     print "Chunk = ", chunk
     print "Table = ", table
     with path("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
-        dbgen_cmd = "./dbgen -f -s % -C % -S % -T %" % (sf, chunks, chunk, table)
-        run("dbgen -h")
+        dbgen_exec = "./dbgen -f -s {sf} -C {chunks} " \
+                     "-S {chunk} -T {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
+        run(dbgen_exec)
 
 
 def install():
