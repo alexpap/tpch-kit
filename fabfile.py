@@ -1,4 +1,4 @@
-from fabric.api import env, run, path
+from fabric.api import env, run, cd
 
 tables_options = {
     'lineitem' : 'L',
@@ -22,23 +22,24 @@ def dbgen(sf=1, table="lopsc"):
     print "Chunks = ", chunks
     print "Chunk = ", chunk
     print "Table = ", table
-    with path("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
+    with cd("~/tpch-kit/tpch/tpch_2_17_0/dbgen"):
         dbgen_exec = "./dbgen -f -s {sf} -C {chunks} " \
                      "-S {chunk} -T {tbl}".format(sf=sf, chunks=chunks, chunk=chunk, tbl=table)
         print dbgen_exec
         run("pwd")
+        run(dbgen_exec)
 
 
 def install():
-    with path("~/"):
+    with cd("~/"):
         run("pwd")
         run("git clone https://github.com/alexpap/tpch-kit.git")
 
 def update():
-    with path("~/tpch-kit"):
+    with cd("~/tpch-kit"):
         run("pwd")
         run("git pull")
 
-def unistall():
-    with path("~/"):
+def uninstall():
+    with cd("~/"):
         run("rm -rf tpch-kit")
