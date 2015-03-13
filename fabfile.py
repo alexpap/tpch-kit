@@ -35,7 +35,7 @@ def install():
 
 def update():
     with path(" cd ~/"):
-        run("git update")
+        run("git pull")
 
 def unistall():
     with path(" cd ~/"):
