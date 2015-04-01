@@ -39,7 +39,7 @@ EOF
 kit_dbgen() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Generating tables on $NODE"
-        ssh -t $USER@$NODE << EOF
+        ssh -T $USER@$NODE << EOF
             cd "$TPCH_HOME/dbgen"
             if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
                 ./dbgen -f -q -s "$TPCH_SF"
@@ -61,7 +61,7 @@ kit_clean() {
 
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Cleaning tables on $NODE"
-        ssh -t $USER@$NODE << EOF
+        ssh -T $USER@$NODE << EOF
             rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null
 EOF
     done
@@ -73,7 +73,7 @@ EOF
 kit_list() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Listing tables on $NODE"
-        ssh -t $USER@$NODE << EOF
+        ssh -T $USER@$NODE << EOF
             cd  $TPCH_KIT_HOME
             ls -lh datasets
 EOF
@@ -99,7 +99,7 @@ kit_install() {
 kit_uninstall(){
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Uninstalling kit from $NODE"
-        ssh -t $USER@$NODE "rm -rf $TPCH_KIT_HOME"
+        ssh -T $USER@$NODE "rm -rf $TPCH_KIT_HOME"
     done
     return 0
 }
