@@ -137,5 +137,6 @@ done
 if [ -n "$1" ]; then echo -e "Unresolved arguments:\n--> $1" ; exit 1; fi
 if [ ! $RUN ]; then echo -e "Please provide an argument "; exit 1; fi
 
-kit_$RUN
+RUN="kit_$RUN"
+$RUN
 exit 0
