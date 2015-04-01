@@ -11,12 +11,6 @@ export TPCH_SF=2
 export TPCH_KIT_CHUNKS="${#TPCH_KIT_NODES[@]}"
 export TPCH_KIT_CHUNK=1
 
-echo "TPCH_KIT_HOME : $TPCH_KIT_HOME"
-echo "TPCH_KIT_NODES : $TPCH_KIT_NODES"
-echo "TPCH_HOME : $TPCH_HOME"
-echo "TPCH_KIT_CHUNKS : $TPCH_KIT_CHUNKS"
-echo "TPCH_KIT_CHUNK : $TPCH_KIT_CHUNK"
-
 ####
 # help message
 SCRIPT_NAME=$(basename $0)
