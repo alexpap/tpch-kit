@@ -58,7 +58,7 @@ EOF
 
 ####
 # clean generated tables
-function kit_clean() {
+kit_clean() {
 
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Cleaning tables on $NODE"
@@ -72,7 +72,7 @@ function kit_clean() {
 
 ####
 # list generated tables
-function kit_list() {
+kit_list() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Listing tables on $NODE"
         ssh $USER@$NODE << EOF
@@ -85,7 +85,7 @@ EOF
 
 ####
 # installs kit to workers
-function kit_install() {
+kit_install() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Installing kit on $NODE."
         rsync -aqvzhe ssh --delete              \
@@ -98,7 +98,7 @@ function kit_install() {
 
 #####
 # uninstalls kit from workers
-function kit_uninstall(){
+kit_uninstall(){
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Uninstalling kit from $NODE"
         ssh $USER@$NODE "rm -rf $TPCH_KIT_HOME"
