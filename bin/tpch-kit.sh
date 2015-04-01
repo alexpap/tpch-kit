@@ -55,10 +55,10 @@ function kit_list() {
 # installs kit to workers
 function kit_install() {
     for NODE in $TPCH_KIT_WORKERS; do
-        echo ssh $USER@$NODE "rsync -aqvzhe ssh --delete    \
+        ssh $USER@$NODE "rsync -aqvzhe ssh --delete    \
             --exclude='datasets/*'                          \
             --exclude='$TPCH_HOME/dbgen/*tbl*'                  \
-            $TPCH_KIT_HOME/ $USER@$TPCH_KIT_MASTER:$TPCH_KIT_HOMEHOME/ &"
+            $TPCH_KIT_HOME/ $USER@$TPCH_KIT_MASTER:$TPCH_KIT_HOME/ &"
     done
     return 0
 }
