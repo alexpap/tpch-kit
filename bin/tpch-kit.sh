@@ -37,9 +37,7 @@ EOF
 # moves and compress generated tables
 # TODO provide explicit table name
 kit_dbgen() {
-    for NODE in $TPCH_KIT_WORKERS; do
-        echo "Generating tables on $NODE"
-        ssh -T $USER@$NODE << EOF
+    DOC=$(cat << EOF
             cd "$TPCH_HOME/dbgen"
             if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
                 ./dbgen -f -q -s "$TPCH_SF"
@@ -51,6 +49,10 @@ kit_dbgen() {
             cd  $TPCH_KIT_HOME/datasets/
             gzip -f *.tbl*
 EOF
+)
+    for NODE in $TPCH_KIT_WORKERS; do
+        echo "Generating tables on $NODE"
+        ssh -T $USER@$NODE """$DOC""" &
      done
     return 0
 }
