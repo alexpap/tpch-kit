@@ -3,58 +3,71 @@
 # install | update | uninstall
 # dbgen | clean | list
 
-TPCH_KIT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
-TPCH_HOME="$TPCH_KIT_HOME/tpch/tpch_2_17_0"
-SCALE_FACTOR=1
-TABLE='n'
-CHUNKS=2
-CHUNK=1
+export TPCH_KIT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
+export TPCH_KIT_MASTER=$(< "$TPCH_KIT_HOME/conf/master")
+export TPCH_KIT_WORKERS=$(< "$TPCH_KIT_HOME/conf/workers")
+export TPCH_HOME="$TPCH_KIT_HOME/tpch/tpch_2_17_0"
+export TPCH_SF=2
+export TPCH_KIT_CHUNKS="${#TPCH_KIT_NODES[@]}"
+export TPCH_KIT_CHUNK=1
 
-function gen() {
-    # dbgen
+echo "TPCH_KIT_HOME : $TPCH_KIT_HOME"
+echo "TPCH_KIT_NODES : $TPCH_KIT_NODES"
+echo "TPCH_HOME : $TPCH_HOME"
+echo "TPCH_KIT_CHUNKS : $TPCH_KIT_CHUNKS"
+echo "TPCH_KIT_CHUNK : $TPCH_KIT_CHUNK"
+
+
+####
+# Generates all tpch tables based on sf, chunk, chunks
+# moves and compress generated tables
+kit_dbgen() {
     cd "$TPCH_HOME/dbgen"
-    if [[ $CHUNKS < 2 ]]; then
-        ./dbgen -f -q -s "$SCALE_FACTOR" -T "$TABLE"
+    if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
+        ./dbgen -f -q -s "$TPCH_SF"
     else
-        ./dbgen -f -q -s "$SCALE_FACTOR" -T "$TABLE" -C "$CHUNKS" -S "$CHUNK"
+        ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$TPCH_KIT_CHUNK"
     fi
 
-    # compress
+    mkdir -p $TPCH_KIT_HOME/datasets/
     mv -f *.tbl* $TPCH_KIT_HOME/datasets/
     cd  $TPCH_KIT_HOME/datasets/
     gzip -f *.tbl*
-
     return 0
 }
 
-function clean() {
-    rm $TPCH_KIT_HOME/datasets/*
+####
+# clean generated tables
+function kit_clean() {
+    rm $TPCH_KIT_HOME/datasets/*tbl*
+    rm $TPCH_HOME/dbgen/*tbl*
+    return 0
 }
 
-function list() {
+####
+# list generated tables
+function kit_list() {
     cd  $TPCH_KIT_HOME/datasets/
     ls -lh
 }
 
-
-function install() {
-
+####
+# installs kit to workers
+function kit_install() {
     for NODE in $TPCH_KIT_WORKERS; do
-        ssh $USER@$NODE << EOF
-            if [ ! -d $TPCH_KIT_HOME ]; then
-                git clone https://github.com/alexpap/tpch-kit.git
-            else
-                cd $TPCH_KIT_HOME
-                git pull
-            fi
-        EOF
+        echo ssh $USER@$NODE "rsync -aqvzhe ssh --delete    \
+            --exclude='datasets/*'                          \
+            --exclude='$TPCH_HOME/dbgen/*tbl*'                  \
+            $TPCH_KIT_HOME/ $USER@$TPCH_KIT_MASTER:$TPCH_KIT_HOMEHOME/ &"
     done
+    return 0
 }
 
-function uninstall(){
+#####
+# uninstalls kit from workers
+function kit_uninstall(){
     rm -rf $TPCH_KIT_HOME
+    return 0
 }
 
-clean
-gen
-list
+kit_install
