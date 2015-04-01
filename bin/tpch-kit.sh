@@ -47,7 +47,6 @@ kit_dbgen() {
                 ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$TPCH_KIT_CHUNK"
             fi
 
-            mkdir -p $TPCH_KIT_HOME/datasets/
             mv -f *.tbl* $TPCH_KIT_HOME/datasets/
             cd  $TPCH_KIT_HOME/datasets/
             gzip -f *.tbl*
@@ -63,8 +62,7 @@ kit_clean() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Cleaning tables on $NODE"
         ssh -t $USER@$NODE << EOF
-            rm $TPCH_KIT_HOME/datasets/*tbl*
-            rm $TPCH_HOME/dbgen/*tbl*
+            rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null
 EOF
     done
     return 0
@@ -76,8 +74,8 @@ kit_list() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Listing tables on $NODE"
         ssh -t $USER@$NODE << EOF
-            cd  $TPCH_KIT_HOME/datasets/
-            ls -lh
+            cd  $TPCH_KIT_HOME
+            ls -lh datasets
 EOF
     done
     return 0
