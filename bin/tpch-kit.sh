@@ -58,7 +58,7 @@ function kit_install() {
     rsync -aqvzhe ssh --delete    \
             --exclude='datasets/*'                          \
             --exclude='$TPCH_HOME/dbgen/*tbl*'                  \
-            $TPCH_KIT_HOME/ $USER@$TPCH_KIT_MASTER:$TPCH_KIT_HOME/ &
+            $TPCH_KIT_HOME/ $USER@$NODE:$TPCH_KIT_HOME/ &
     done
     return 0
 }
