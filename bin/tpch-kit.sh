@@ -73,7 +73,7 @@ kit_clean() {
 kit_list() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Listing tables on $NODE"
-        ssh $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets' &
+        ssh $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets 2> /dev/null' &
     done
     return 0
 }
