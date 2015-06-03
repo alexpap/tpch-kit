@@ -47,14 +47,13 @@ EOF
 kit_dbgen() {
   COUNTER=0
   for NODE in ${TPCH_KIT_NODES[*]}; do
-      ssh $USER@$NODE <<<EOF
-              cd "$TPCH_HOME/dbgen"
-              ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER"
-              mkdir -p $TPCH_KIT_HOME/datasets/
-              mv -f *.tbl* $TPCH_KIT_HOME/datasets/
-              cd  $TPCH_KIT_HOME/datasets/
-              gzip -f *.tbl*
-      EOF &
+       ssh $USER@$NODE """                           \
+              cd "$TPCH_HOME/dbgen"                 \
+              ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER" \
+              mkdir -p $TPCH_KIT_HOME/datasets/     \
+              mv -f *.tbl* $TPCH_KIT_HOME/datasets/ \
+              cd  $TPCH_KIT_HOME/datasets/          \
+              gzip -f *.tbl* """ &
       COUNTER=$((COUNTER+1))
   done
   return 0
