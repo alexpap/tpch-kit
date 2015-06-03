@@ -49,7 +49,10 @@ kit_dbgen() {
 COUNTER=0
 for NODE in ${TPCH_KIT_NODES[*]}; do
 
+COUNTER=$((COUNTER+1))
+
 echo "Generating tabls for $NODE/$COUNTER"
+
 RUN=$( cat << EOF
   cd "$TPCH_HOME/dbgen"
   if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
@@ -66,7 +69,6 @@ EOF
 
 ssh -n $USER@$NODE """$RUN""" &
 
-COUNTER=$((COUNTER+1))
 
 done
 
