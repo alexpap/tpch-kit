@@ -1,18 +1,39 @@
 #!/usr/bin/env bash
 #
-# install | update | uninstall
+# install |  uninstall
+# update
 # dbgen | clean | list
 
 export TPCH_KIT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
-export TPCH_KIT_MASTER=$(< "$TPCH_KIT_HOME/conf/master")
-export TPCH_KIT_WORKERS=$(< "$TPCH_KIT_HOME/conf/workers")
 export TPCH_HOME="$TPCH_KIT_HOME/tpch/tpch_2_17_0"
-export TPCH_SF=2
+export TPCH_KIT_NODES=($(< "$TPCH_KIT_HOME/conf/nodes"))
+export TPCH_SF=$(< "$TPCH_KIT_HOME/conf/sf")
 export TPCH_KIT_CHUNKS="${#TPCH_KIT_NODES[@]}"
-export TPCH_KIT_CHUNK=1
 
-####
+
+echo " TPCH_KIT_HOME   : $TPCH_KIT_HOME"
+echo " TPCH_HOME       : $TPCH_HOME"
+echo " TPCH_SF         : $TPCH_SF"
+echo " TPCH_KIT_CHUNKS : $TPCH_KIT_CHUNKS"
+
+COUNTER=0
+for NODE in ${TPCH_KIT_NODES[*]}; do
+    echo "ssh $USER@$NODE <<<EOF
+            cd "$TPCH_HOME/dbgen"
+            ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER"
+            mkdir -p $TPCH_KIT_HOME/datasets/
+            mv -f *.tbl* $TPCH_KIT_HOME/datasets/
+            cd  $TPCH_KIT_HOME/datasets/
+            gzip -f *.tbl*
+    EOF"
+    COUNTER=$((COUNTER+1))
+
+
+done
+exit 0
+########################################################################################################################
 # help message
+########################################################################################################################
 SCRIPT_NAME=$(basename $0)
 function usage(){
     cat << EOF
@@ -32,10 +53,10 @@ function usage(){
         --uninstall                     - uninstalls kit on each worker
 EOF
 }
-####
-# Generates all tpch tables based on sf, chunk, chunks
-# moves and compress generated tables
-# TODO provide explicit table name
+
+########################################################################################################################
+# Generates all tpch tables (based on sf, chunks), moves and compress tables.
+########################################################################################################################
 kit_dbgen() {
     DOC=$(cat << EOF
             cd "$TPCH_HOME/dbgen"
@@ -44,42 +65,47 @@ kit_dbgen() {
             else
                 ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$TPCH_KIT_CHUNK"
             fi
-
+            mkdir -p $TPCH_KIT_HOME/datasets/
             mv -f *.tbl* $TPCH_KIT_HOME/datasets/
             cd  $TPCH_KIT_HOME/datasets/
             gzip -f *.tbl*
 EOF
 )
-    for NODE in $TPCH_KIT_WORKERS; do
+    COUNTER=0
+    for NODE in $TPCH_KIT_NODES; do
+        COUNTER=$((COUNTER+1))
         echo "Generating tables on $NODE"
-        ssh $USER@$NODE """$DOC""" &
+        echo ssh $USER@$NODE """$DOC""" &
      done
     return 0
 }
 
-####
+########################################################################################################################
 # clean generated tables
+########################################################################################################################
 kit_clean() {
 
-    for NODE in $TPCH_KIT_WORKERS; do
+    for NODE in $TPCH_KIT_NODES; do
         echo "Cleaning tables on $NODE"
         ssh $USER@$NODE 'rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null' &
     done
     return 0
 }
 
-####
+########################################################################################################################
 # list generated tables
+########################################################################################################################
 kit_list() {
-    for NODE in $TPCH_KIT_WORKERS; do
+    for NODE in $TPCH_KIT_NODES; do
         echo "Listing tables on $NODE"
         ssh $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets 2> /dev/null' &
     done
     return 0
 }
 
-####
+########################################################################################################################
 # installs kit to workers
+########################################################################################################################
 kit_install() {
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Installing kit on $NODE."
@@ -91,8 +117,9 @@ kit_install() {
     return 0
 }
 
-#####
+########################################################################################################################
 # uninstalls kit from workers
+########################################################################################################################
 kit_uninstall(){
     for NODE in $TPCH_KIT_WORKERS; do
         echo "Uninstalling kit from $NODE"
