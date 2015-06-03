@@ -65,7 +65,7 @@ kit_dbgen() {
 ########################################################################################################################
 kit_clean() {
 
-    for NODE in $TPCH_KIT_NODES; do
+  for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Cleaning tables on $NODE"
         ssh $USER@$NODE 'rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null' &
     done
@@ -76,7 +76,7 @@ kit_clean() {
 # list generated tables
 ########################################################################################################################
 kit_list() {
-    for NODE in $TPCH_KIT_NODES; do
+  for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Listing tables on $NODE"
         ssh $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets 2> /dev/null' &
     done
@@ -87,7 +87,7 @@ kit_list() {
 # installs kit to workers
 ########################################################################################################################
 kit_install() {
-    for NODE in $TPCH_KIT_WORKERS; do
+  for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Installing kit on $NODE."
         rsync -aqvzhe ssh --delete              \
             --exclude='datasets/*'              \
@@ -101,7 +101,7 @@ kit_install() {
 # uninstalls kit from workers
 ########################################################################################################################
 kit_uninstall(){
-    for NODE in $TPCH_KIT_WORKERS; do
+  for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Uninstalling kit from $NODE"
         ssh -T $USER@$NODE "rm -rf $TPCH_KIT_HOME"
     done
