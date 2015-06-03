@@ -6,7 +6,9 @@
 
 export TPCH_KIT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 export TPCH_HOME="$TPCH_KIT_HOME/tpch/tpch_2_17_0"
-export TPCH_KIT_NODES=($(< "$TPCH_KIT_HOME/conf/nodes"))
+export TPCH_KIT_MASTER=($(< "$TPCH_KIT_HOME/conf/master"))
+export TPCH_KIT_WORKERS=($(< "$TPCH_KIT_HOME/conf/workers"))
+export TPCH_KIT_NODES=($(cat "$TPCH_KIT_HOME/conf/master" "$TPCH_KIT_HOME/conf/workers"))
 export TPCH_SF=$(< "$TPCH_KIT_HOME/conf/sf")
 export TPCH_KIT_CHUNKS="${#TPCH_KIT_NODES[@]}"
 
@@ -79,7 +81,7 @@ kit_clean() {
 
   for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Cleaning tables on $NODE"
-        ssh -n $USER@$NODE 'rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null' &
+        ssh -n $USER@$NODE "rm $TPCH_KIT_HOME/datasets/*tbl* 2> /dev/null" &
     done
     return 0
 }
@@ -99,7 +101,7 @@ kit_list() {
 # installs kit to workers
 ########################################################################################################################
 kit_install() {
-  for NODE in ${TPCH_KIT_NODES[*]}; do
+  for NODE in ${TPCH_KIT_WORKERS[*]}; do
         echo "Installing kit on $NODE."
         rsync -aqvzhe ssh --delete              \
             --exclude='datasets/*'              \
@@ -113,7 +115,7 @@ kit_install() {
 # uninstalls kit from workers
 ########################################################################################################################
 kit_uninstall(){
-  for NODE in ${TPCH_KIT_NODES[*]}; do
+  for NODE in ${TPCH_KIT_WORKERS[*]}; do
         echo "Uninstalling kit from $NODE"
         ssh -n  $USER@$NODE "rm -rf $TPCH_KIT_HOME"
     done
