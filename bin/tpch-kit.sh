@@ -10,27 +10,14 @@ export TPCH_KIT_NODES=($(< "$TPCH_KIT_HOME/conf/nodes"))
 export TPCH_SF=$(< "$TPCH_KIT_HOME/conf/sf")
 export TPCH_KIT_CHUNKS="${#TPCH_KIT_NODES[@]}"
 
-
-echo " TPCH_KIT_HOME   : $TPCH_KIT_HOME"
-echo " TPCH_HOME       : $TPCH_HOME"
-echo " TPCH_SF         : $TPCH_SF"
-echo " TPCH_KIT_CHUNKS : $TPCH_KIT_CHUNKS"
-
-COUNTER=0
-for NODE in ${TPCH_KIT_NODES[*]}; do
-    echo "ssh $USER@$NODE <<<EOF
-            cd "$TPCH_HOME/dbgen"
-            ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER"
-            mkdir -p $TPCH_KIT_HOME/datasets/
-            mv -f *.tbl* $TPCH_KIT_HOME/datasets/
-            cd  $TPCH_KIT_HOME/datasets/
-            gzip -f *.tbl*
-    EOF"
-    COUNTER=$((COUNTER+1))
-
-
-done
-exit 0
+#
+#echo " TPCH_KIT_HOME   : $TPCH_KIT_HOME"
+#echo " TPCH_HOME       : $TPCH_HOME"
+#echo " TPCH_SF         : $TPCH_SF"
+#echo " TPCH_KIT_CHUNKS : $TPCH_KIT_CHUNKS"
+#
+#
+#exit 0
 ########################################################################################################################
 # help message
 ########################################################################################################################
@@ -58,26 +45,19 @@ EOF
 # Generates all tpch tables (based on sf, chunks), moves and compress tables.
 ########################################################################################################################
 kit_dbgen() {
-    DOC=$(cat << EOF
-            cd "$TPCH_HOME/dbgen"
-            if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
-                ./dbgen -f -q -s "$TPCH_SF"
-            else
-                ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$TPCH_KIT_CHUNK"
-            fi
-            mkdir -p $TPCH_KIT_HOME/datasets/
-            mv -f *.tbl* $TPCH_KIT_HOME/datasets/
-            cd  $TPCH_KIT_HOME/datasets/
-            gzip -f *.tbl*
-EOF
-)
-    COUNTER=0
-    for NODE in $TPCH_KIT_NODES; do
-        COUNTER=$((COUNTER+1))
-        echo "Generating tables on $NODE"
-        echo ssh $USER@$NODE """$DOC""" &
-     done
-    return 0
+  COUNTER=0
+  for NODE in ${TPCH_KIT_NODES[*]}; do
+      echo "ssh $USER@$NODE <<<EOF
+              cd "$TPCH_HOME/dbgen"
+              ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER"
+              mkdir -p $TPCH_KIT_HOME/datasets/
+              mv -f *.tbl* $TPCH_KIT_HOME/datasets/
+              cd  $TPCH_KIT_HOME/datasets/
+              gzip -f *.tbl*
+      EOF"
+      COUNTER=$((COUNTER+1))
+  done
+  return 0
 }
 
 ########################################################################################################################
