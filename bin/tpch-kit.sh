@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
 # install |  uninstall
-# update
 # dbgen | clean | list
 
 export TPCH_KIT_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
@@ -92,7 +91,7 @@ kit_clean() {
 kit_list() {
   for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Listing tables on $NODE"
-        ssh -n $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets 2> /dev/null' &
+        ssh -n $USER@$NODE "ls -lh $TPCH_KIT_HOME/datasets 2> /dev/null"
     done
     return 0
 }
@@ -105,7 +104,7 @@ kit_install() {
         echo "Installing kit on $NODE."
         rsync -aqvzhe ssh --delete              \
             --exclude='datasets/*'              \
-            --exclude='$TPCH_HOME/dbgen/*tbl*'  \
+            --exclude="$TPCH_HOME/dbgen/*tbl*"  \
             $TPCH_KIT_HOME/ $USER@$NODE:$TPCH_KIT_HOME/ &
     done
     return 0
