@@ -45,18 +45,31 @@ EOF
 # Generates all tpch tables (based on sf, chunks), moves and compress tables.
 ########################################################################################################################
 kit_dbgen() {
-  COUNTER=0
-  for NODE in ${TPCH_KIT_NODES[*]}; do
-       ssh -n $USER@$NODE """                       \
-              cd "$TPCH_HOME/dbgen"                 \
-              ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER" \
-              mkdir -p $TPCH_KIT_HOME/datasets/     \
-              mv -f *.tbl* $TPCH_KIT_HOME/datasets/ \
-              cd  $TPCH_KIT_HOME/datasets/          \
-              gzip -f *.tbl* """ &
-      COUNTER=$((COUNTER+1))
-  done
-  return 0
+COUNTER=0
+for NODE in ${TPCH_KIT_NODES[*]}; do
+
+echo "Generating tabls for $NODE/$COUNTER"
+RUN=$( cat << EOF
+  cd "$TPCH_HOME/dbgen"
+  if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
+    ./dbgen -f -q -s "$TPCH_SF"
+  else
+    ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER"
+  fi
+  mkdir -p $TPCH_KIT_HOME/datasets/
+  mv -f *.tbl* $TPCH_KIT_HOME/datasets/
+  cd  $TPCH_KIT_HOME/datasets/
+  gzip -f *.tbl*
+EOF
+)
+
+ssh -n $USER@$NODE """$RUN""" &
+
+COUNTER=$((COUNTER+1))
+
+done
+
+return 0
 }
 
 ########################################################################################################################
@@ -140,4 +153,4 @@ if [ ! $RUN ]; then echo -e "Please provide an argument "; exit 1; fi
 
 RUN="kit_$RUN"
 $RUN
-exit 0
+
