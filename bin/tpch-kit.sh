@@ -47,7 +47,7 @@ EOF
 kit_dbgen() {
   COUNTER=0
   for NODE in ${TPCH_KIT_NODES[*]}; do
-       ssh $USER@$NODE """                           \
+       ssh -n $USER@$NODE """                       \
               cd "$TPCH_HOME/dbgen"                 \
               ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER" \
               mkdir -p $TPCH_KIT_HOME/datasets/     \
@@ -66,7 +66,7 @@ kit_clean() {
 
   for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Cleaning tables on $NODE"
-        ssh $USER@$NODE 'rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null' &
+        ssh -n $USER@$NODE 'rm $TPCH_KIT_HOME/datasets/*tbl* $TPCH_HOME/dbgen/*tbl* >> /dev/null' &
     done
     return 0
 }
@@ -77,7 +77,7 @@ kit_clean() {
 kit_list() {
   for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Listing tables on $NODE"
-        ssh $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets 2> /dev/null' &
+        ssh -n $USER@$NODE 'cd  $TPCH_KIT_HOME;ls -lh datasets 2> /dev/null' &
     done
     return 0
 }
@@ -102,7 +102,7 @@ kit_install() {
 kit_uninstall(){
   for NODE in ${TPCH_KIT_NODES[*]}; do
         echo "Uninstalling kit from $NODE"
-        ssh -T $USER@$NODE "rm -rf $TPCH_KIT_HOME"
+        ssh -n  $USER@$NODE "rm -rf $TPCH_KIT_HOME"
     done
     return 0
 }
