@@ -55,7 +55,7 @@ echo "Generating tabls for $NODE/$COUNTER"
 
 RUN=$( cat << EOF
   cd "$TPCH_HOME/dbgen"
-  if [[ $TPCH_KIT_CHUNKS < 2 ]]; then
+  if (( $TPCH_KIT_CHUNKS < 2 )); then
     ./dbgen -f -q -s "$TPCH_SF"
   else
     ./dbgen -f -q -s "$TPCH_SF" -C "$TPCH_KIT_CHUNKS" -S "$COUNTER"
